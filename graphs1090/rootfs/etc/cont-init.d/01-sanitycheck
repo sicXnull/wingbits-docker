@@ -1,0 +1,46 @@
+#!/usr/bin/with-contenv /bin/bash
+#shellcheck shell=bash
+
+NOCOLOR='\033[0m'
+LIGHTRED='\033[1;31m'
+
+# Check to make sure the correct command line arguments have been set
+EXITCODE=0
+NO_BEAST_DATA=0
+NO_JSON_DATA=0
+if [[ -z "${BEASTHOST}" && -z "${MLATHOST}" ]]; then
+  NO_BEAST_DATA=1
+fi
+
+if [[ ! -e "${DATAPATH}/stats.json" ]]; then
+  NO_JSON_DATA=1
+fi
+
+if [[ "$NO_BEAST_DATA" -eq 1 && "$NO_JSON_DATA" -eq 1 ]]; then
+  echo -e "${LIGHTRED}ERROR: No datasources! BEASTHOST/MLATHOST environment variable not set and no ${DATAPATH}/stats.json file present!${NOCOLOR}"
+  EXITCODE=1
+# Below commented out to issue #16
+# elif [[ "$NO_BEAST_DATA" -eq 0 && "$NO_JSON_DATA" -eq 0 ]]; then
+#   echo -e "${LIGHTRED}ERROR: Two datasources! Please use either BEASTHOST/MLATHOST environment variable OR ${DATAPATH}/stats.json file, not both.${NOCOLOR}"
+#   EXITCODE=1
+fi
+
+# If LAT/LONG are given in isolation...
+if [ -z "${LAT}" ]; then
+  if [ -n "${LONG}" ]; then
+    echo -e "${LIGHTRED}ERROR: Both LAT & LONG environment variables required${NOCOLOR}"
+    EXITCODE=1
+  fi
+fi
+if [ -z "${LONG}" ]; then
+  if [ -n "${LAT}" ]; then
+    echo -e "${LIGHTRED}ERROR: Both LAT & LONG environment variables required${NOCOLOR}"
+    EXITCODE=1
+  fi
+fi
+
+if [ $EXITCODE -ne 0 ]; then
+  exit 1
+fi
+
+ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone

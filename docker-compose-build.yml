@@ -1,0 +1,72 @@
+version: '2'
+
+x-latlon: &latlon
+  LAT: ""
+  LONG: ""
+
+x-wingbits-device: &wingbits-device
+  WINGBITS_DEVICE_ID: ""
+
+x-tz: &timezone "America/New_York" #https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
+services:
+  dump1090-fa:
+    build: ./dump1090-fa
+    image: dump1090-fa
+    restart: always
+    environment:
+      <<: *latlon
+      DUMP1090_DEVICE: "0" 
+      DUMP1090_GAIN: "25" #leave blank for default
+      DUMP1090_PPM: "0" 
+      DUMP1090_MAX_RANGE: "360" 
+      DUMP1090_ADAPTIVE_DYNAMIC_RANGE: "" #leave blank for default
+      DUMP1090_ADAPTIVE_BURST: "" #leave blank for default
+      DUMP1090_ADAPTIVE_MIN_GAIN: "" #leave blank for default
+      DUMP1090_ADAPTIVE_MAX_GAIN: "" #leave blank for default
+      DUMP1090_SLOW_CPU: "" #leave blank for default    networks:
+    devices:
+      - "/dev/bus/usb"
+    ports:
+      - "8080:8080"
+    networks:
+      - wingbits
+
+  graphs1090:
+    depends_on:
+      - dump1090-fa
+    build: ./graphs1090
+    image: graphs1090
+    tty: true
+    restart: always
+    volumes:
+      - graphs1090_rrd:/var/lib/collectd/rrd:rw
+    environment:
+      <<: *latlon
+      BEASTHOST: "dump1090-fa"
+      MLATHOST: "dump1090-fa"
+      TZ: *timezone
+    ports:
+      - "8888:80"
+    networks:
+      - wingbits
+
+  wingbits:
+    depends_on:
+      - dump1090-fa
+    build: ./wingbits
+    image: wingbits
+    restart: always
+    environment:
+      <<: *wingbits-device
+      DUMP1090_HOST: "dump1090-fa"
+    networks:
+      - wingbits
+
+networks:
+  wingbits:
+    driver: bridge
+
+volumes:
+  graphs1090_rrd:
+    driver: local

@@ -40,7 +40,7 @@ The following can also be changed, or leave as is for default settings
 
 ## Build from Source
 
-``` cd /opt```
+```cd /opt```
 
 ```git clone https://github.com/sicXnull/wingbits-docker.git```
 

@@ -8,7 +8,7 @@ To install with prebuilt containers.
 
 ```cd /opt```
 
-``` wget https://raw.githubusercontent.com/sicXnull/wingbits-docker/main/docker-compose.yml```
+```wget https://raw.githubusercontent.com/sicXnull/wingbits-docker/main/docker-compose.yml```
 
 Edit the following variables in docker-compose file
 

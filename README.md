@@ -29,7 +29,7 @@ Spin up the container
 The following can also be changed, or leave as is for default settings
 
       DUMP1090_DEVICE: "0" 
-      DUMP1090_GAIN: "25" 
+      DUMP1090_GAIN: "" #leave blank for default
       DUMP1090_PPM: "0" 
       DUMP1090_MAX_RANGE: "360" 
       DUMP1090_ADAPTIVE_DYNAMIC_RANGE: "" 

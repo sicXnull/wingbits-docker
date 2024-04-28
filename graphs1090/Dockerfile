@@ -46,7 +46,7 @@ RUN set -x && \
     git clone \
         -b master \
         --depth 1 \
-        https://github.com/wiedehopf/graphs1090.git \
+        https://github.com/sicXnull/graphs1090.git \
         /usr/share/graphs1090/git \
         && \
     pushd /usr/share/graphs1090/git && \

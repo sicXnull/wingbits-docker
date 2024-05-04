@@ -18,7 +18,7 @@ Edit the following variables in docker-compose file
 
 ```WINGBITS_DEVICE_ID: ""```
 
-```timezone ""```
+```timezone ""``` See - https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 Spin up the container
 

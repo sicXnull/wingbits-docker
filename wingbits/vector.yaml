@@ -13,17 +13,22 @@ transforms:
       - "readsb"
     drop_on_abort: true
     source: |
-      read_at, err = .now * 1000
-      new_event.read_at = to_int!(read_at)
-      new_event.processed_at, err = to_unix_timestamp(.timestamp, unit: "milliseconds")
-      new_event.lat = .lat
-      new_event.lon = .lon
-      new_event.hex = .hex
-      new_event.flight = if is_null(.flight) { "" } else { .flight }
-      new_event.device_id = if is_null("${WINGBITS_DEVICE_ID}") { "not set" } else { "${WINGBITS_DEVICE_ID}" }
-      new_event.true_heading = if is_null(.track) { 0.0 } else { .track }
-      new_event.alt_baro = if is_null(.alt_baro) { -2000 }  else if .alt_baro == "ground" { -1000 } else { .alt_baro }
-      new_event.category = if is_null(.category) { "" } else { .category }
+      read_at, err = .now * 1000 #
+      new_event.read_at = to_int!(read_at) #
+      new_event.processed_at, err = to_unix_timestamp(.timestamp, unit: "milliseconds") #
+      new_event.lat = .lat #
+      new_event.lon = .lon #
+      new_event.hex = .hex #
+      new_event.flight = if is_null(.flight) { "" } else { .flight } #
+      new_event.device_id = if is_null("${WINGBITS_DEVICE_ID}") { "not set" } else { "${WINGBITS_DEVICE_ID}" } #
+      new_event.true_heading = if is_null(.track) { 0.0 } else { .track } #
+      new_event.alt_baro = .alt_baro #
+      new_event.alt_geom = .alt_geom #
+      new_event.speed = if is_null(.gs) { 0 } else { .gs } #
+      new_event.vertical_rate = if is_null(.geom_rate) { 0 } else { .geom_rate } #
+      new_event.on_ground = if .alt_baro == "ground" { true } else { false } #
+      new_event.squawk = if is_null(.squawk) { "" } else { .squawk } #
+      new_event.rssi = .rssi
       . = new_event
 
 sinks:

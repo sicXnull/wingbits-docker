@@ -1,7 +1,9 @@
+# wb_version: 0.0.8
+
 sources:
   readsb:
     type: "socket"
-    address: "127.0.0.1:30006"
+    address: "0.0.0.0:30006"
     mode: "tcp"
     decoding:
       codec: "json"
@@ -13,22 +15,32 @@ transforms:
       - "readsb"
     drop_on_abort: true
     source: |
-      read_at, err = .now * 1000 #
-      new_event.read_at = to_int!(read_at) #
-      new_event.processed_at, err = to_unix_timestamp(.timestamp, unit: "milliseconds") #
-      new_event.lat = .lat #
-      new_event.lon = .lon #
-      new_event.hex = .hex #
-      new_event.flight = if is_null(.flight) { "" } else { .flight } #
-      new_event.device_id = if is_null("${WINGBITS_DEVICE_ID}") { "not set" } else { "${WINGBITS_DEVICE_ID}" } #
-      new_event.true_heading = if is_null(.track) { 0.0 } else { .track } #
-      new_event.alt_baro = .alt_baro #
-      new_event.alt_geom = .alt_geom #
-      new_event.speed = if is_null(.gs) { 0 } else { .gs } #
-      new_event.vertical_rate = if is_null(.geom_rate) { 0 } else { .geom_rate } #
-      new_event.on_ground = if .alt_baro == "ground" { true } else { false } #
-      new_event.squawk = if is_null(.squawk) { "" } else { .squawk } #
-      new_event.rssi = .rssi
+      read_at, _ = .now * 1000
+      new_event.ab = .alt_baro
+      new_event.ag = .alt_geom
+      new_event.c = .category
+      new_event.d = if is_null("${WINGBITS_DEVICE_ID}") { "not set" } else { "${WINGBITS_DEVICE_ID}" }
+      new_event.f = .flight
+      new_event.gr = .geom_rate
+      new_event.gs = .gs
+      new_event.h = .hex
+      new_event.la = .lat
+      new_event.lo = .lon
+      new_event.ra = to_int!(read_at)
+      new_event.rs = .rssi
+      new_event.sq = .squawk
+      new_event.th = .true_heading
+      new_event.tr = .track
+      new_event.n = .nic
+      new_event.nb = .nic_baro
+      new_event.np = .nac_p
+      new_event.nv = .nac_v
+      new_event.gv = .gva
+      new_event.s = .sil
+      new_event.st = .sil_type
+      new_event.rc = .rc
+      new_event.v = .version
+      new_event.ts = .tas
       . = new_event
 
 sinks:
@@ -36,4 +48,4 @@ sinks:
     type: "vector"
     inputs:
       - "remapped"
-    address: "feed.wingbits.com:6000"
+    address: "feed.wingbits.com:6001"
